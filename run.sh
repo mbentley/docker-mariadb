@@ -31,26 +31,16 @@ then
   echo "==================================="
   echo "Bootstrapping new database...";echo
 
-  # shellcheck disable=SC2086
-  /usr/bin/mysqld --user=mysql --bootstrap --verbose=0 ${MYSQLD_ARGS} < "${TEMP_FILE}"
-  rm -f "${TEMP_FILE}"
-
-  echo;echo "Bootstrap of MariaDB complete"
-  echo "===================================";echo
-else
-  echo "Bootstrapping MariaDB not neccessary; skipping.";echo
-fi
-
+  # create a sql file to bootstrap db
 # create a sql file used to bootstrap the environment
-TEMP_FILE="$(mktemp)"
-if [ ! -f "${TEMP_FILE}" ];
-then
-  echo "error: unable to create temp file; exiting"
-  exit 1
-fi
+  TEMP_FILE="$(mktemp)"
+  if [ ! -f "${TEMP_FILE}" ];
+  then
+    echo "error: unable to create temp file; exiting"
+    exit 1
+  fi
 
-# create a sql file to bootstrap db
-cat << EOF > "${TEMP_FILE}"
+  cat << EOF > "${TEMP_FILE}"
 # drop test database
 DROP DATABASE test;
 
@@ -61,17 +51,27 @@ UPDATE user set host='%' where host='$(hostname)';
 UPDATE user SET password=PASSWORD("${MYSQL_ROOT_PASSWORD}") WHERE user='root';
 EOF
 
-# only create db if db name provided
-if [ ! -z "${MYSQL_DATABASE}" ];
-then
-  echo "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\` CHARACTER SET utf8 COLLATE utf8_general_ci;" >> "${TEMP_FILE}"
-
-  # only create a non-root user if user name provided
-  if [ ! -z "${MYSQL_USER}" ];
+  # only create db if db name provided
+  if [ ! -z "${MYSQL_DATABASE}" ];
   then
-    echo "GRANT ALL ON \`${MYSQL_DATABASE}\`.* to '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';" >> "${TEMP_FILE}"
-    echo "GRANT ALL ON \`${MYSQL_DATABASE}\`.* to '${MYSQL_USER}'@'localhost' IDENTIFIED BY '${MYSQL_PASSWORD}';" >> "${TEMP_FILE}"
+    echo "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\` CHARACTER SET utf8 COLLATE utf8_general_ci;" >> "${TEMP_FILE}"
+
+    # only create a non-root user if user name provided
+    if [ ! -z "${MYSQL_USER}" ];
+    then
+      echo "GRANT ALL ON \`${MYSQL_DATABASE}\`.* to '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';" >> "${TEMP_FILE}"
+      echo "GRANT ALL ON \`${MYSQL_DATABASE}\`.* to '${MYSQL_USER}'@'localhost' IDENTIFIED BY '${MYSQL_PASSWORD}';" >> "${TEMP_FILE}"
+    fi
   fi
+
+  # shellcheck disable=SC2086
+  /usr/bin/mysqld --user=mysql --bootstrap --verbose=0 ${MYSQLD_ARGS} < "${TEMP_FILE}"
+  rm -f "${TEMP_FILE}"
+
+  echo;echo "Bootstrap of MariaDB complete"
+  echo "===================================";echo
+else
+  echo "Bootstrapping MariaDB not neccessary; skipping.";echo
 fi
 
 echo "==================================="
