@@ -1,7 +1,7 @@
 mbentley/mariadb
 ================
 
-docker image for mariadb
+docker image for mariadb based off of alpine:latest
 
 To pull this image:
 `docker pull mbentley/mariadb`
