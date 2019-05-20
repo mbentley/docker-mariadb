@@ -52,12 +52,12 @@ UPDATE user SET password=PASSWORD("${MYSQL_ROOT_PASSWORD}") WHERE user='root';
 EOF
 
   # only create db if db name provided
-  if [ ! -z "${MYSQL_DATABASE}" ];
+  if [ -n "${MYSQL_DATABASE}" ];
   then
     echo "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\` CHARACTER SET utf8 COLLATE utf8_general_ci;" >> "${TEMP_FILE}"
 
     # only create a non-root user if user name provided
-    if [ ! -z "${MYSQL_USER}" ];
+    if [ -n "${MYSQL_USER}" ];
     then
       echo "GRANT ALL ON \`${MYSQL_DATABASE}\`.* to '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';" >> "${TEMP_FILE}"
       echo "GRANT ALL ON \`${MYSQL_DATABASE}\`.* to '${MYSQL_USER}'@'localhost' IDENTIFIED BY '${MYSQL_PASSWORD}';" >> "${TEMP_FILE}"
