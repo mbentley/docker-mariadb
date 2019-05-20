@@ -1,7 +1,7 @@
 FROM alpine:latest
 MAINTAINER Matt Bentley <nbentley@mbentley.net>
 
-RUN (apk --no-cache add mariadb mariadb-client &&\
+RUN (apk --no-cache add mariadb mariadb-client mariadb-server-utils &&\
   deluser mysql &&\
   addgroup -g 507 mysql &&\
   adduser -h /var/lib/mysql -D -u 507 -g mysql -G mysql -s /sbin/nologin mysql &&\
