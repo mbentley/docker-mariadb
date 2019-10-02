@@ -1,5 +1,5 @@
 FROM alpine:latest
-MAINTAINER Matt Bentley <nbentley@mbentley.net>
+MAINTAINER Matt Bentley <mbentley@mbentley.net>
 
 RUN (apk --no-cache add mariadb mariadb-client mariadb-server-utils &&\
   deluser mysql &&\
