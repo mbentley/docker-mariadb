@@ -1,4 +1,4 @@
-FROM alpine:3.11
+FROM alpine:3.12
 MAINTAINER Matt Bentley <mbentley@mbentley.net>
 
 RUN (apk --no-cache add mariadb mariadb-client mariadb-server-utils &&\
