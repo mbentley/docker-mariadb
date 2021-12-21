@@ -10,6 +10,7 @@ MYSQLD_ARGS=${MYSQLD_ARGS:-}
 
 chown -R mysql:mysql /var/lib/mysql
 
+# make sure that the run directory exists & has the right permissions
 if [ ! -d "/run/mysqld" ]
 then
   mkdir /run/mysqld
@@ -23,7 +24,7 @@ then
   echo "Bootstrapping system database...";echo
 
   # shellcheck disable=SC2086
-  /usr/bin/mysql_install_db ${MYSQLD_ARGS} --user=mysql --rpm
+  /usr/bin/mysql_install_db ${MYSQLD_ARGS} --user=mysql --datadir=/var/lib/mysql
 
   echo "Bootstrap of system db complete!"
   echo "===================================";echo
@@ -42,13 +43,14 @@ then
 
   cat << EOF > "${TEMP_FILE}"
 # drop test database
-DROP DATABASE test;
+DROP DATABASE IF EXISTS test;
 
 # update user access to allow root login from all hosts and set a password for root
+CREATE DATABASE IF NOT EXISTS mysql;
 USE mysql;
 FLUSH PRIVILEGES;
-UPDATE user set host='%' where host='$(hostname)';
-UPDATE user SET password=PASSWORD("${MYSQL_ROOT_PASSWORD}") WHERE user='root';
+CREATE OR REPLACE USER 'root'@'%' IDENTIFIED BY "${MYSQL_ROOT_PASSWORD}";
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
 EOF
 
   # only create db if db name provided
