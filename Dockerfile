@@ -1,5 +1,5 @@
 # rebased/repackaged base image that only updates existing packages
-FROM mbentley/alpine:3.16
+FROM mbentley/alpine:3.17
 LABEL maintainer="Matt Bentley <mbentley@mbentley.net>"
 
 RUN apk --no-cache add mariadb mariadb-client mariadb-server-utils &&\
