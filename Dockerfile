@@ -7,7 +7,7 @@ RUN apk --no-cache add mariadb mariadb-client mariadb-server-utils &&\
   addgroup -g 507 mysql &&\
   adduser -h /var/lib/mysql -D -u 507 -g mysql -G mysql -s /sbin/nologin mysql &&\
   mkdir /run/mysqld &&\
-  chown -R mysql:mysql /run/mysqld /var/lib/mysql /etc/mysql
+  chown -R mysql:mysql /run/mysqld /var/lib/mysql
 
 COPY entrypoint.sh /entrypoint.sh
 
