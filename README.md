@@ -1,6 +1,6 @@
 # mbentley/mariadb
 
-docker image for mariadb based off of alpine:3.20
+docker image for mariadb based off of alpine:3.24
 
 To pull this image:
 `docker pull mbentley/mariadb`
