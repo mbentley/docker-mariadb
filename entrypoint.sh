@@ -24,7 +24,7 @@ then
   echo "Bootstrapping system database...";echo
 
   # shellcheck disable=SC2086
-  /usr/bin/mysql_install_db ${MYSQLD_ARGS} --user=mysql --datadir=/var/lib/mysql
+  /usr/bin/mariadb-install-db ${MYSQLD_ARGS} --user=mysql --datadir=/var/lib/mysql
 
   echo "Bootstrap of system db complete!"
   echo "===================================";echo
@@ -67,7 +67,7 @@ EOF
   fi
 
   # shellcheck disable=SC2086
-  /usr/bin/mysqld --user=mysql --bootstrap --verbose=0 ${MYSQLD_ARGS} < "${TEMP_FILE}"
+  /usr/bin/mariadbd --user=mysql --bootstrap --verbose=0 ${MYSQLD_ARGS} < "${TEMP_FILE}"
   rm -f "${TEMP_FILE}"
 
   echo;echo "Bootstrap of MariaDB complete"
@@ -79,4 +79,4 @@ fi
 echo "==================================="
 echo "Launching MariaDB...";echo
 # shellcheck disable=SC2086
-exec /usr/bin/mysqld --user=mysql ${MYSQLD_ARGS}
+exec /usr/bin/mariadbd --user=mysql ${MYSQLD_ARGS}
